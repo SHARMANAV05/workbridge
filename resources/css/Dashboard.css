@@ -1,0 +1,86 @@
+// .navbar {
+//     padding: 14px 0;
+// }
+
+// .navbar-brand {
+//     font-size: 1.8rem;
+//     font-weight: 700;
+// }
+
+// .nav-link {
+//     font-size: 1rem;
+//     font-weight: 500;
+//     margin-left: 10px;
+// }
+
+
+/* ===========================
+   Hero Section
+=========================== */
+
+.hero-section {
+    padding: 90px 0 80px;
+}
+
+.hero-badge {
+    display: inline-block;
+    background: #0d6efd;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 25px;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.15;
+    color: #212529;
+    margin-bottom: 25px;
+}
+
+.hero-description {
+    max-width: 700px;
+    margin: 0 auto 40px;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #6c757d;
+}
+
+.hero-buttons {
+    margin-top: 10px;
+}
+
+@media (max-width: 992px) {
+
+    .hero-title {
+        font-size: 3rem;
+    }
+
+    .hero-description {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .hero-section {
+        padding: 70px 0;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .hero-badge {
+        font-size: 0.75rem;
+    }
+}
