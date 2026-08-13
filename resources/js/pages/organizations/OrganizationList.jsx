@@ -31,15 +31,15 @@ function OrganizationList(){
         }
     }
 
-    const createContact = () =>{
-        if(window.confirm('Want to create a New Contact ?'))
+    const createContact = (orgId) =>{
+        if(window.confirm('Want to create a New Contact ☎ ?'))
         {
-            window.open('/organizations/contacts/create', '_blank');
+            window.open(`/organizations/contacts/create?orgId=${orgId}`, '_blank');
         }
     }
 
         const createContract = () =>{
-        if(window.confirm('Want to create a New Contract ?'))
+        if(window.confirm('Want to create a New Contract 📃 ?'))
         {
             window.open('/contracts/create', '_blank');
         }
@@ -58,7 +58,9 @@ function OrganizationList(){
                     <h2 className="table-title">Organizations</h2>
                 </div>
                 <div className="col-2">
-                    <button className="border-0 bg-transparent p-0" title="Create Organization Contact"><a onClick={() => createContract()}  className="btn btn-outline-dark"> Create Contract</a></button>
+                    <button className="border-0 bg-transparent p-0" title="Employee-Organization Contract">
+                        <a onClick={() => createContract()}  className="btn btn-outline-dark"> Create Contract</a>
+                    </button>
                 </div>
             </div>
             <p className="table-count">Total: {organizations.length}</p>
@@ -84,12 +86,12 @@ function OrganizationList(){
                                         <div className="action-group">
                                             <button 
                                                 className="action-btn btn" 
-                                                onClick={() => createContact()} 
+                                                onClick={() => createContact(org.id)} 
                                                 title="Create Organization Contact"
                                             >
                                                 <span> <a className="material-symbols-outlined">contacts</a></span>
                                             </button>
-                                            <span className="action-divider">|</span>                                             
+                                            <span className="action-divider text-muted">|</span>                                             
                                             <button 
                                                 className="action-btn edit-btn" 
                                                 onClick={() => handleEdit(org)} 
@@ -97,7 +99,7 @@ function OrganizationList(){
                                             >
                                                 <span className="material-symbols-outlined">edit</span>                                                
                                             </button>
-                                            <span className="action-divider">|</span> 
+                                            <span className="action-divider text-muted">|</span> 
                                             <button 
                                                 className="action-btn delete-btn" 
                                                 onClick={() => handleDelete(org.id)} 

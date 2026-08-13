@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ContractController;
+use App\Http\Controllers\OrganizationContactController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -25,3 +27,7 @@ Route::apiResource('employees', EmployeeController::class);
 Route::apiResource('organizations', OrganizationController::class);
 
 Route::apiResource('contracts', ContractController::class);
+
+Route::apiResource('organizations/contacts', OrganizationContactController::class);
+
+// Route::get('/test-contact-code', [ OrganizationContactController::class, 'generateContactCode']);

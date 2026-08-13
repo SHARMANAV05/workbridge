@@ -10,43 +10,118 @@ function OrganizationContact() {
                                         value: orgData.id,
                                         label: orgData.name                                        
                                     }));
+    const [isSubmitting, setisSubmitting] = useState(false);
+    // const contactCodeValue = "CONTR202608-01";                               //contact code not needed 
 
     const [formData, setFormData] = useState({
         organizationId: '',
-        primaryStatus: '',
-        activeStatus: '',
-        contactCode: '',
+        primaryStatus: 0,
+        activeStatus: 1,
+        // contactCode: contactCodeValue,
         first_name: '',
         last_name: '',
-        designation: '',       
+        designation: '',
+        emailCont: '',
+        contactNum: '',
     });
 
     
     const handleChange = (e) => {
-    console.log(e.target);
-        
-    console.log("Name:", e.target.name);
-    console.log("Type:", e.target.type);
-    console.log("Value:", e.target.value);
-    console.log("Checked:", e.target.checked);
+    // console.log(e.target);
+    const value =  e.target.type === "checkbox" ? (e.target.checked ? 1 : 0) : e.target.value;
+
     
-        setFormData ({ ...formData, [e.target.name] : e.target.value});
+    // console.log("Name:", e.target.name);
+    // console.log("Type:", e.target.type);
+    // console.log("Value:", value);
+    // console.log("Checked:", e.target.checked);
+    
+    
+        setFormData ({ ...formData, [e.target.name] : value});
     };
 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('This is the Submitted Data', formData);
+        setisSubmitting(true);
+        fetch('/api/organizations/contacts',{
+                    method: 'POST', 
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }, 
+                    body: JSON.stringify(formData)
+                })
+                .then( async (res) =>{
+                    let dataJs = await res.json();
+                    if(!res.ok){
+                        throw new Error(dataJs.message);
+                    }
+                    return(dataJs);
+                })
+                .then(data => {
+                    // console.log('This is the Submitted Data', formData);
+                    console.log(data);
+                    alert(data.message);
+                    resetForm();
+                    setisSubmitting(false);
+                })
+                .catch( err => {
+                    console.log('Error : ', err);
+                    alert(err.message);
+                    setisSubmitting(false);
+                });
+    };
+
+    const resetForm = () => {
+        setFormData({   
+            organizationId: '',
+            primaryStatus: 0,
+            activeStatus: 1,
+            first_name: '',
+            last_name: '',
+            designation: '',
+            emailCont: '',
+            contactNum: '',    
+        });
+        setSelectedOrganizations(null);
+
+        
     }
 
     useEffect(()=>{
         fetch(`/api/organizations`)
             .then(res => res.json())
             .then(data => setOrganizationsData(data));
-        
+
+            
         console.log('Data Loading');
 
     }, []);
+
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const orgId = params.get('orgId');
+
+
+        if(orgId && orgOptions.length > 0){
+            const selectedOrg = orgOptions.find(
+                option => String(option.value) === String(orgId)
+            );
+        
+            if(selectedOrg){
+                setSelectedOrganizations(selectedOrg);
+
+                setFormData({
+                    ...formData,
+                    organizationId: selectedOrg.value
+                });
+            }
+        
+        
+        
+        }
+    }, [organizationsData]);
 
 
 
@@ -105,7 +180,7 @@ function OrganizationContact() {
                         </span>
 
                         Contact Information
-                        
+
                     </h5>
 
                 </div>
@@ -124,7 +199,8 @@ function OrganizationContact() {
 
                                 <Select                                     
                                     id="organizationName" 
-                                    name="organizationName"                                    
+                                    name="organizationName"
+                                    required                         
                                     defaultValue=""
                                     options={orgOptions}                                    
                                     onChange={(option) =>{setSelectedOrganizations(option); setFormData({ ...formData, organizationId: option.value})}}
@@ -132,7 +208,7 @@ function OrganizationContact() {
                                     isSearchable={true}            
                                     value={selectedOrganizations}
                                     maxMenuHeight={200}                                
-                                /> 
+                                />
 
                             </div>
 
@@ -149,6 +225,7 @@ function OrganizationContact() {
                                     <input
                                         className="form-check-input"
                                         type="checkbox"
+                                        checked={formData.primaryStatus === 1}
                                         name="primaryStatus"
                                         onChange={handleChange}
                                         id="primaryStatus"
@@ -177,7 +254,7 @@ function OrganizationContact() {
                                     <input
                                         className="form-check-input"
                                         type="checkbox"
-                                        defaultChecked
+                                        checked={formData.activeStatus === 1}
                                         name="activeStatus"
                                         onChange={handleChange}
                                         id="activeStatus"
@@ -197,7 +274,7 @@ function OrganizationContact() {
                         <div className="row g-4 mt-1">
                             {/* Contact Code */}
 
-                            <div className="col-lg-4">
+                            {/* <div className="col-lg-4">
 
                                 <label className="form-label" htmlFor="contactCode">
                                     Contact Code
@@ -205,14 +282,15 @@ function OrganizationContact() {
 
                                 <input
                                     type="text"
-                                    className="form-control disabled"                                
+                                    className="form-control disabled"                                                              
                                     readOnly
+                                    value={formData.contactCode}
                                     name="contactCode"
                                     onChange={handleChange}
                                     id="contactCode"
                                 />
 
-                            </div>
+                            </div> */}
 
                             {/* Contact Name */}
 
@@ -224,9 +302,11 @@ function OrganizationContact() {
 
                                 <input
                                     type="text"
+                                    required
                                     className="form-control"
                                     placeholder="John"
                                     name="first_name"
+                                    value={formData.first_name}
                                     onChange={handleChange}
                                     id="first_name"
                                 />
@@ -241,9 +321,11 @@ function OrganizationContact() {
 
                                 <input
                                     type="text"
+                                    required
                                     className="form-control"
                                     placeholder="Doe"
                                     name="last_name"
+                                    value={formData.last_name}
                                     onChange={handleChange}
                                     id="last_name"
                                 />
@@ -261,8 +343,10 @@ function OrganizationContact() {
                                 <input
                                     type="text"
                                     className="form-control"
+                                    required
                                     placeholder="Operations Manager"
                                     name="designation"
+                                    value={formData.designation}
                                     onChange={handleChange}
                                     id="designation"
                                     
@@ -280,7 +364,12 @@ function OrganizationContact() {
 
                                 <input
                                     type="email"
+                                    required
                                     className="form-control"
+                                    value={formData.emailCont}
+                                    name="emailCont"
+                                    id="emailCont"
+                                    onChange={handleChange}
                                     placeholder="john@email.com"
                                 />
 
@@ -290,13 +379,18 @@ function OrganizationContact() {
 
                             <div className="col-lg-4">
 
-                                <label className="form-label">
+                                <label className="form-label" htmlFor="contactNum">
                                     Contact Number
                                 </label>
 
                                 <input
                                     type="text"
+                                    required
                                     className="form-control"
+                                    value={formData.contactNum}
+                                    name="contactNum"
+                                    id="contactNum"
+                                    onChange={handleChange}
                                     placeholder="+91 9876543210"
                                 />
 
@@ -322,17 +416,22 @@ function OrganizationContact() {
 
                             </button>
 
-                            <button className="btn btn-outline-dark">
+                            <button type="reset" className="btn btn-outline-dark" onClick={resetForm}>
 
                                 Reset
 
                             </button>
-
-                            <button type="submit" className="btn btn-primary">
-
-                                Save Contact
-
-                            </button>
+                            {isSubmitting
+                            ? 
+                                <button type="submit" className="btn btn-primary px-4 disabled" name="submit">
+                                    Saving.... 
+                                </button>
+                            
+                            :
+                                <button type="submit" className="btn btn-primary px-4" name="submit">
+                                     Save Contact
+                                </button>
+                            }
 
                         </div>
 

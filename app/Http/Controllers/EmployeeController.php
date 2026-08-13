@@ -37,6 +37,7 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        
         // return response()->json($request->all());
         $validateData =  $request->validate([
             'first_name'            => ['required','string','max:50','regex:/^[A-Za-z\s\.\-]+$/'],
@@ -138,7 +139,7 @@ class EmployeeController extends Controller
                                                             'updated_by' => $id,
                                                             'is_active' => $request->is_active,
                                                             'is_latest' => $request->is_latest,
-                                                        ]);
+                                                    ]);
                 $output = Employee::find($id);
                 return response()->json(['message' => 'Employee Updated Sucessfully 🎉', 'Updated Value' => $output], 200);                                           
             }
@@ -147,7 +148,6 @@ class EmployeeController extends Controller
                 return response()->json(['message' => $e->getMessage()], 500);
             }
             
-
         }
         
     }

@@ -11,11 +11,11 @@ class OrganizationContact extends Model
 
     protected $fillable = [
         'org_id',
-        'contact_code',
         'designation',
         'email',
         'contact_name',
         'is_primary',
         'is_active',
+        'contact_num',
     ];
 }

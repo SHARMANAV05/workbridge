@@ -16,13 +16,12 @@ return new class extends Migration
         Schema::create('organization_contacts', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('org_id');
-            $table->string('contact_code');
-            $table->string('designation');
-            $table->string('email');
             $table->string('contact_name');
+            $table->string('contact_num', 15);
+            $table->string('email');
+            $table->string('designation');            
             $table->boolean('is_primary')->default(false);
             $table->boolean('is_active')->default(true);
-            $table->boolean('is_latest')->default(true);
             $table->timestamps();
         });
     }
@@ -37,7 +36,3 @@ return new class extends Migration
         Schema::dropIfExists('organization_contacts');
     }
 };
-
-
-// id, org_id (FK), contact_name, designation, 
-// email, contact_number, is_primary, created_at, is_active

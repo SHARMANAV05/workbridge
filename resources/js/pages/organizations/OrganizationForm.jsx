@@ -20,7 +20,7 @@ function OrganizationForm(){
         setFormData({ ...formData, [e.target.name]: e.target.value});               //spread operator -> '...formData' (3 dot '.' followed by smallercase [f] only 'formData')
     };
 
-    const resetForm = ()=> {
+    const resetForm = () => {
         setFormData({
             organizationName: '',
             industryType: '',
@@ -44,8 +44,7 @@ function OrganizationForm(){
             },
             body: JSON.stringify(formData)
         })
-        .then( async (res) => 
-            {
+        .then( async (res) => {
                 let dataJs = await res.json();
 
                 if(!res.ok)
@@ -57,12 +56,12 @@ function OrganizationForm(){
         .then(data => {
             console.log(data);
             setIsSubmitting(false);
-            alert(data.message)
+            alert(data.message);
             resetForm();            
         })
         .catch(err => { 
             console.log('Error:', err);
-            alert(err.message)
+            alert(err.message);
             setIsSubmitting(false);
         });        
     };

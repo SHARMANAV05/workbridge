@@ -27,7 +27,7 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
-        // return response()->json($request->all());
+        // return response()->json([$request->all(), 'message' => 'chill']);
 
         $validateData = $request->validate([
 
@@ -45,10 +45,10 @@ class OrganizationController extends Controller
         $validateData = array_map(function($v){return is_string($v) ? trim($v) : $v ;}, $validateData);
 
         try{
-            $lastOrg = Organization::latest('id')->first();
-            $newOrgId = $lastOrg ? $lastOrg->org_id + 1 : 1;
+            $lastRowId = Organization::latest('id')->first();
+            $newRowId = $lastRowId ? $lastRowId->org_id + 1 : 1;
             Organization::create([
-                'org_id'           => $newOrgId,
+                'org_id'           => $newRowId,
                 'name'             => $validateData['organizationName'],
                 'industry_type'    => $validateData['industryType'],
                 'established_at'   => $validateData['establishedDate'],    
