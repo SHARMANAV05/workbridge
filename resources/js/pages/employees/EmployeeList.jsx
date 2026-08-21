@@ -89,15 +89,17 @@ function EmployeeList() {
                         <div className="modal-dialog modal-lg">
                             <div className="modal-content">
 
-                                <div className="modal-header">
-                                    <h4 className="modal-title">Edit Employee</h4>
-
+                                <header className="modal-header">
+                                    <h1 className="modal-title" id="modal-title-org">
+                                        Edit Employee
+                                    </h1>
                                     <button
                                         type="button"
                                         className="btn-close"
+                                        aria-label="Close modal"
                                         onClick={() => setShowModal(false)}                                      
                                     ></button>
-                                </div>
+                                </header>
 
                                 <div className="modal-body">
                                     <form>

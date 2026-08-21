@@ -41,7 +41,7 @@ body {
     box-shadow: 0 4px 12px rgba(0, 74, 198, 0.15);
 }
 
-.employee-table-container {
+.organization-table-container {
     background: #fff;
     padding: 24px;
     border-radius: 16px;
@@ -139,4 +139,10 @@ body {
     background: white;
     border-radius: 10px;
     overflow: hidden;
+}
+
+.org-edit-form .form-label,
+.org-edit-form .form-control,
+.org-edit-form textarea {
+  font-size: calc(1em + 0.2pt);   /* ← +2 points on top of whatever size it currently has */
 }

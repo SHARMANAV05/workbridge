@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Organization;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class OrganizationController extends Controller
@@ -15,7 +16,7 @@ class OrganizationController extends Controller
      */
     public function index()
     {
-        $organization = Organization::where('is_active', 1)->where('is_latest', 1)->get();
+        $organization = Organization::where('is_active', 1)->where('is_latest', 1)->orderBy('org_id', 'asc')->get();
         return response()->json($organization);
     }
 
@@ -84,17 +85,72 @@ class OrganizationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request,int $id)
     {
-        // return response()->json($request->is_active);
-        try{
-            Organization::where('id', $id)->update(['is_active' => $request->is_active]);
-            return response()->json(['message' => 'Organization Deleted Successfully'], 201);
+        // return response()->json($request->method());
+        if($request->method() === "PATCH"){
+            try{
+                Organization::where('id', $id)->update(['is_active' => $request->is_active]);
+                return response()->json(['message' => 'Organization Deleted Successfully'], 201);
 
+            }
+            catch(Exception $e){
+                return response()->json(['message' => 'Unable to Delete, Try Again !'], 500);
+            }
         }
-        catch(Exception $e)
-        {
-            return response()->json(['message' => 'Unable to Delete, Try Again !'], 500);
+        elseif($request->method() === 'PUT'){
+            // return response()->json($request->all());
+
+            
+            $validateData = $request->validate([
+
+                    'org_id'            => 'required|int',
+                    'name'              => ['required','string','max:50','regex:/^[A-Za-z\s\.\-]+$/'], 
+                    'industry_type'     => 'required|string|min:2|max:100',                              
+                    'established_at'    => 'required|date',                         
+                    'gst_number'        => 'required|string|size:15', 
+                    'country'           => 'required|string|min:4|max:50',             
+                    'address'           => 'required|string|min:5',                
+                    'city'              => 'required|string|min:2',        
+                    'state'             => 'required|string|min:2',
+                    'created_at'        => 'required|date',                    
+                    'created_by'        => 'string|nullable',
+                    'description'       => 'string|nullable',
+                    'pincode'           => 'string|nullable',
+
+            ]);
+
+            $validateData = array_map(function($v){return is_string($v) ? trim($v) : $v ;}, $validateData);
+
+            // return response()->json(['data' => $validateData, 'message' => 'validateData']);
+            try{
+                DB::beginTransaction();
+                Organization::where('id', $id)->update(['is_latest' => 0]);
+
+                Organization::create([
+                    'org_id'           => $validateData['org_id'],
+                    'name'             => $validateData['name'],
+                    'industry_type'    => $validateData['industry_type'],
+                    'established_at'   => $validateData['established_at'],
+                    'gst_number'       => $validateData['gst_number'],
+                    'country'          => $validateData['country'],
+                    'address'          => $validateData['address'],
+                    'city'             => $validateData['city'],
+                    'state'            => $validateData['state'],
+                ]);
+                
+                
+                DB::commit();        
+                return response()->json(['message' => 'Organization Updated Successfully' ]);
+
+            }
+            catch(Exception $e){
+                DB::rollBack();
+                return response()->json(['message' => $e ]);
+            }
+        }
+        else{
+            return response()->json(['message' => 'From Else']);
         }
         
     }
