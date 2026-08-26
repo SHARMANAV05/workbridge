@@ -21,7 +21,8 @@ class OrganizationContactController extends Controller
      */
     public function index()
     {
-        //
+        $orgContacts = OrganizationContact::with('organization')->where('is_active', 1)->get();
+        return response()->json($orgContacts);
     }
 
     /**
@@ -46,7 +47,7 @@ class OrganizationContactController extends Controller
 
         $validateData = array_map(function($v){ return is_string($v) ? trim($v) : $v ;}, $validateData);
 
-        // return response()->json(['message' => 'Before Try-Catch', $validateData]);
+        return response()->json(['message' => 'Before Try-Catch', $validateData]);
         try{
             OrganizationContact::create([
                 'org_id'        => $validateData['organizationId'],

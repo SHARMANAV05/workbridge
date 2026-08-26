@@ -10,6 +10,7 @@ import OrganizationList from './pages/organizations/OrganizationList';
 import OrganizationForm from './pages/organizations/OrganizationForm';
 import ContractsForm from './pages/contracts/ContractsForm';
 import OrgContactsCreate from './pages/organizations/OrganizationContacts';
+import AllContacts from './pages/organizations/contacts/allOrgContactsList';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                     <Route path="/organizations/create" element={<OrganizationForm />} />
                     <Route path="/contracts/create" element={<ContractsForm/>} />
                     <Route path="/organizations/contacts/create" element={<OrgContactsCreate/>}/>
+                    <Route path="/organizations-allContacts" element={<AllContacts/>}/>
                 </Routes>
             </div>
 

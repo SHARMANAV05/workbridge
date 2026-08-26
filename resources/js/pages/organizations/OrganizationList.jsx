@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from "react";
 import '../../../css/OrganizationList.css';
+import contractIcon from '../../assets/icons/contractIcon.webp';
+import allContactIcon from '../../assets/icons/allContactBook.webp';
 
 function OrganizationList(){
     const [organizations, setOrganizations] = useState([]);
@@ -42,7 +44,7 @@ function OrganizationList(){
     const handleEdit = (org) => {
         setEditOrganization(org);        
         alert('Edit Organization');
-        console.log('state', org);
+        // console.log('state', org);
         setShowModal(true);
     }
 
@@ -56,12 +58,28 @@ function OrganizationList(){
                 },
                 body: JSON.stringify(editOrganization)
             })
-            .then(res => res.json())
+            .then( async (res) => {
+                    let dataJs = await res.json();
+
+                    if(!res.ok)
+                    {
+                        throw new Error(dataJs.message);
+                    }
+                    return dataJs;
+                })
             .then(data => {
-                console.log('from Controller', data);
+                fetch(`/api/organizations`)
+                .then(res => res.json())
+                .then(data => setOrganizations(data));
+                setShowModal(false);
+                console.log(data.message);
+                alert('Updates inititated\nOrganization Updated Successfully');
+            })
+            .catch(err => {            
+                alert('Error : ' + err.message);
+                console.log(err.message);            
             });
-            setShowModal(false);
-            alert('Update inititated');
+            
         }
         
     }
@@ -284,12 +302,31 @@ function OrganizationList(){
             )}
             <div className="organization-table-container">
                 <div className="row d-flex">
-                    <div className="col-10">
+                    <div className="col-8   ">
                         <h2 className="table-title">Organizations</h2>
                     </div>
                     <div className="col-2">
+                        <button className="border-0 bg-transparent p-0" title="Organization Contacts">
+                            <a onClick={() => createContract()}  className="btn btn-outline-dark">
+                                <img
+                                    src={allContactIcon}
+                                    alt="Create Contract"
+                                    width="20"
+                                    height="20"/> All Contacts
+                            </a>
+                        </button>
+                    </div>
+                    <div className="col-2">
                         <button className="border-0 bg-transparent p-0" title="Employee-Organization Contract">
-                            <a onClick={() => createContract()}  className="btn btn-outline-dark"> Create Contract</a>
+                            <a onClick={() => createContract()}  className="btn btn-outline-dark">
+                                <img
+                                    src={contractIcon}
+                                    alt="Create Contract"
+                                    width="20"
+                                    height="20"
+                                /> 
+                                Create Contract 
+                            </a>
                         </button>
                     </div>
                 </div>

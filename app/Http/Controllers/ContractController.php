@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\OrganizationContact;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
@@ -13,7 +13,8 @@ class ContractController extends Controller
      */
     public function index()
     {
-        return response()->json('ContractFrom.jsx');
+        $contacts = OrganizationContact::class;
+        return response()->json($contacts);
     }
 
     /**

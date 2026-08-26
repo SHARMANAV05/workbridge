@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Organization;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,4 +19,8 @@ class OrganizationContact extends Model
         'is_active',
         'contact_num',
     ];
+
+    public function organization(){
+        return $this->belongsTo(Organization::class, 'org_id', 'id');
+    }
 }

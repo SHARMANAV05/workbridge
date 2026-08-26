@@ -28,6 +28,6 @@ Route::apiResource('organizations', OrganizationController::class);
 
 Route::apiResource('contracts', ContractController::class);
 
-Route::apiResource('organizations/contacts', OrganizationContactController::class);
+Route::apiResource('organizations-contacts', OrganizationContactController::class);
 
-// Route::get('/test-contact-code', [ OrganizationContactController::class, 'generateContactCode']);
+// Route::get('/test-contact-contr', [ OrganizationContactController::class, 'index']);
