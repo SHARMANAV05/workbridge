@@ -18,7 +18,9 @@ function allOrgContactsList(){
         <>
             <div>
                 <h1>Contacts</h1>
-                <span>{Contacts.length}</span>
+                    <span className="badge rounded-pill text-bg-light border fw-semibold px-2 py-1">
+                       Total: {Contacts.length}
+                    </span>
             </div>    
         
                             {/* Responsive Table */}
@@ -78,7 +80,7 @@ function allOrgContactsList(){
                                     <td>
                                         <div className="d-flex justify-content-center gap-2">
 
-                                            <button className="btn btn-sm btn-outline-primary">
+                                            <button className="btn btn-sm btn-outline-primary" title="Calling History">
 
                                                 <span className="material-symbols-outlined">
                                                     visibility
@@ -86,7 +88,7 @@ function allOrgContactsList(){
 
                                             </button>
 
-                                            <button className="btn btn-sm btn-outline-warning">
+                                            <button className="btn btn-sm btn-outline-warning" title="Update Contact Info">
 
                                                 <span className="material-symbols-outlined">
                                                     edit
@@ -94,7 +96,7 @@ function allOrgContactsList(){
 
                                             </button>
 
-                                            <button className="btn btn-sm btn-outline-danger">
+                                            <button className="btn btn-sm btn-outline-danger" title="Delete Contact">
 
                                                 <span className="material-symbols-outlined">
                                                     delete

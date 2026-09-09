@@ -25,6 +25,7 @@ function App() {
                         <NavLink className="nav-link" to="/employees/create" end>Add Employee</NavLink>
                         <NavLink className="nav-link" to="/organizations/create" end>Add Organization</NavLink>
                         <NavLink className="nav-link" to="/contracts/create" end>Add Contracts</NavLink>
+                        <NavLink className="nav-link" to="/organizations-allContacts" end>Org Contacts</NavLink>
                     </div>
                 </div>
             </nav>

@@ -1,25 +1,86 @@
 import { useEffect, useState } from "react";
 import "../../../css/ContractsForm.css";
 import Select from 'react-select';
+import dayjs from 'dayjs';
+import { isSet } from "lodash";
 
 function CreateContract() {
 
+    const [quarterDropDown, setQuarterDropDown] = useState(true);
+    const [invoice_recurrance_type, setInvoice_recurrance_type] = useState("Monthly");
     const [startDate,setStartDate] = useState("");
     const [endDate,setEndDate] = useState("");
-    const [totalDays,setTotalDays] = useState(180);
+    const [durationTypeValue, setDurationTypeValue] = useState("");
+    const [totalDays,setTotalDays] = useState(0);
+    const [totalMonths,setTotalMonths] = useState(0);
     const [organizationsData, setOrganizationsData] = useState([]);
     const [employeesData, setEmployeesData] = useState([]);
+    const [orgContacts, setOrgContacts] = useState([]);
     const [selectedOrganizations, setSelectedOrganizations] = useState(null);
     const [selectedEmployees, setselectedEmployees] = useState(null);
+    const [selectOrgContacts, setSelectOrgContacts] = useState(null);
     const orgOptions = organizationsData.map(orgData =>({                                        
                                         value: orgData.id,
                                         label: orgData.name                                        
-                                    }));
+                        }));
 
     const empOptions = employeesData.map(empData =>({
                                         value: empData.id,
                                         label: empData.first_name + ' ' + empData.last_name                                 
-                                    }))
+                        }));
+    
+    const orgContactsOptions = orgContacts.map(orgContactsData => ({
+                                            value: orgContactsData.id,
+                                            label: orgContactsData.contact_name
+                                }));
+                                
+    
+    const handleStartDate=(e)=>{
+
+        const value=e.target.value;
+
+        setStartDate(value);
+        setDurationTypeValue("");
+        setInvoice_recurrance_type("");
+        handleQuarterDropDown(value,endDate);
+        updateDays(value,endDate);
+        monthDifference(value,endDate);
+        alert('Please select Invoice Generation Part');
+
+    }
+
+    const handleEndDate=(e)=>{
+
+        const value=e.target.value;
+
+        setEndDate(value);
+
+        handleQuarterDropDown(startDate,value);
+        updateDays(startDate,value);
+        monthDifference(startDate,value);
+
+    }
+    
+    const handleQuarterDropDown = (start,end) => {
+        if(start && end){
+
+            const startObj = new Date(start);
+            const endObj = new Date(end);
+
+            const years = endObj.getFullYear() - startObj.getFullYear();
+            const months = endObj.getMonth() - startObj.getMonth();
+
+            const monthSpan = (years * 12) + months;
+
+            if((Math.floor(monthSpan / 3)) <= 0){
+                setQuarterDropDown(false);
+            }
+            else{
+                setQuarterDropDown(true);
+            }
+        }
+        
+    }
 
     const updateDays = (start,end)=>{
 
@@ -32,30 +93,43 @@ function CreateContract() {
                 (endObj-startObj)/(1000*60*60*24)
             );
 
-            setTotalDays(diff>0 ? diff : 0);
+            setTotalDays(diff>0 ? diff+1 : 0);
         }
 
     };
 
-    const handleStartDate=(e)=>{
+    const monthDifference = (start, end) => {
 
-        const value=e.target.value;
+        if(start && end){
 
-        setStartDate(value);
+            const startObj = new Date(start);
+            const endObj = new Date(end);
 
-        updateDays(value,endDate);
+            const years = endObj.getFullYear() - startObj.getFullYear();
+            const months = endObj.getMonth() - startObj.getMonth();
 
+            setTotalMonths((years * 12) + months);
+        }
+    };
+    
+    const handleOnchageInvoiceType = (e) => {
+        console.log(invoice_type.value);  
+
+        if((invoice_type.value) == 1){
+            setDurationTypeValue(totalMonths);
+            setInvoice_recurrance_type("Monthly");
+
+        }
+        else if ((invoice_type.value) == 2){
+            setDurationTypeValue(Math.floor(totalMonths / 3));
+            setInvoice_recurrance_type("Quarterly");
+        }
+        else if((invoice_type.value) == 3){
+            setDurationTypeValue(totalDays);
+            setInvoice_recurrance_type("Daily");
+        }
     }
 
-    const handleEndDate=(e)=>{
-
-        const value=e.target.value;
-
-        setEndDate(value);
-
-        updateDays(startDate,value);
-
-    }
 
     useEffect(()=>{
         fetch(`/api/organizations`)
@@ -65,7 +139,11 @@ function CreateContract() {
         fetch(`/api/employees`)
             .then(res => res.json())
             .then(data => setEmployeesData(data));
-        
+
+        fetch(`/api/organizations-contacts`)
+            .then(res => res.json())
+            .then(data => setOrgContacts(data));
+
         console.log('Data Loading');
     }, []);
 
@@ -172,7 +250,9 @@ function CreateContract() {
                                     onChange={(option) => setSelectedOrganizations(option)}
                                     placeholder="Select Organization"
                                     isSearchable={true}
-                                    maxMenuHeight={200}
+                                    maxMenuHeight={150}
+                                    menuPortalTarget={document.body}
+                                    styles={{menuPortal: base => ({...base, zIndex: 9999})}}                                        
                                     />                             
 
                             </div>
@@ -185,17 +265,18 @@ function CreateContract() {
                                     Organization Contact
                                 </label>
 
-                                <select 
-                                    className="form-select" 
+                                <Select 
                                     id="organization_contact" 
                                     name="organization_contact"
-                                >
-
-                                    <option value="">
-                                        Select Contact...
-                                    </option>
-
-                                </select>
+                                    options={orgContactsOptions}
+                                    value={selectOrgContacts}
+                                    onChange={(option) => setSelectOrgContacts(option)}
+                                    placeholder="Select Representative"
+                                    isSearchable={true}                                
+                                    maxMenuHeight={150}
+                                    menuPortalTarget={document.body}
+                                    styles={{menuPortal: base => ({...base, zIndex: 9999})}}    
+                                />
 
                             </div>
 
@@ -217,7 +298,9 @@ function CreateContract() {
                                     onChange={(option) => setselectedEmployees(option)}
                                     placeholder="Select Employee"
                                     isSearchable={true}
-                                    maxMenuHeight={200}
+                                    maxMenuHeight={150}
+                                    menuPortalTarget={document.body}
+                                    styles={{menuPortal: base => ({...base, zIndex: 9999})}}                                    
                                 />                                
 
                             </div>
@@ -280,7 +363,7 @@ function CreateContract() {
                                     type="date"
                                     className="form-control"
                                     value={startDate}
-                                    onChange={handleStartDate}
+                                    onChange={handleStartDate}                                    
                                 />
 
                             </div>
@@ -336,16 +419,29 @@ function CreateContract() {
 
                                 <select 
                                     className="form-select"                                     
-                                    id="invoice_type" 
+                                    id="invoice_type"
                                     name="invoice_type"
+                                    placeholder="Invoice Generation Type"
+                                    defaultValue=""
+                                    onChange={handleOnchageInvoiceType}
                                 >
-
-                                    <option value="monthly">
-                                        Monthly Recurring
+                                    <option 
+                                        value=''
+                                        disabled              
+                                    >
+                                        Select Invoice Generation Type
                                     </option>
 
-                                    <option value="fixed">
-                                        Fixed Price
+                                    <option value="1">
+                                        Monthly
+                                    </option>
+                                    {quarterDropDown && ( <option value="2">
+                                            Quarterly
+                                        </option>
+                                        
+                                    )}
+                                    <option value="3">
+                                        Daily
                                     </option>
 
                                 </select>
@@ -355,7 +451,8 @@ function CreateContract() {
                         </div>
 
                     </div>
-                                {/* ===========================
+
+                    {/* ===========================
                         Financial Section
                     =========================== */}
 
@@ -385,7 +482,8 @@ function CreateContract() {
                                             className="form-label" 
                                             htmlFor ="billing_rate"
                                         >
-                                            Billing Rate ($)
+                                            Billing Rate ( on {invoice_recurrance_type} basis)
+                                    
                                         </label>
 
                                         <input
@@ -402,17 +500,19 @@ function CreateContract() {
 
                                         <label 
                                             className="form-label" 
-                                            htmlFor ="employee_wage"
+                                            htmlFor ="cont_days"
                                         >
-                                            Employee Wage ($)
+                                            Duration as Per Generation Type
                                         </label>
 
                                         <input                                            
-                                            id="employee_wage" 
-                                            name="employee_wage"
+                                            id="cont_days" 
+                                            name="cont_days"
                                             type="number"
                                             className="form-control"
-                                            placeholder="0.00"
+                                            placeholder="0"
+                                            value={durationTypeValue}
+                                            readOnly
                                         />
 
                                     </div>

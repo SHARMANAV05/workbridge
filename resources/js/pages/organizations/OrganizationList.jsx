@@ -307,7 +307,7 @@ function OrganizationList(){
                     </div>
                     <div className="col-2">
                         <button className="border-0 bg-transparent p-0" title="Organization Contacts">
-                            <a onClick={() => createContract()}  className="btn btn-outline-dark">
+                            <a onClick={() => window.open(`/organizations-allContacts`, `_blank`)}  className="btn btn-outline-dark">
                                 <img
                                     src={allContactIcon}
                                     alt="Create Contract"
